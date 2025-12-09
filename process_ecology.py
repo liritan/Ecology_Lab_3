@@ -210,9 +210,19 @@ def process(initial_equations, faks, equations, restrictions, time_value=0.0):
     xm = [1.0, 1.0, 1.0, 1.0, 1.0] 
 
     data_sol = odeint(pend, initial_equations, C, args=(faks, equations, xm, time_value))
-    
-  
-    data_sol = np.clip(data_sol, 0.0, 1.0) 
+
+
+    data_sol_raw = data_sol
+
+    data_sol_display = np.clip(data_sol_raw, 0.0, 1.0)
+
+
+    create_graphic(C, data_sol_display)
+    create_disturbances_graphic(C, faks, time_value)
+    fill_diagrams(data_sol_display, initial_equations, restrictions)
+
+
+    data_sol = data_sol_raw
     create_graphic(C, data_sol)
     create_disturbances_graphic(C, faks, time_value)  
     fill_diagrams(data_sol, initial_equations, restrictions)

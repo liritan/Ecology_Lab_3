@@ -1,19 +1,20 @@
 import numpy as np
-def pend(x, C, faks, f, xm, t=0.0, power=0.55):
+
+def pend(x, C, faks, f, xm, t=0.0, power=0.8):  # Увеличен power для меньшего сжатия
     """
     Система дифференциальных уравнений для модели потерь от загрязнения атмосферы
-    x = [Cf1, Cf2, Cf3, Cf4, Cf5] - характеристики 
-    C - концентрация загрязняющих веществ 
+    x = [Cf1, Cf2, Cf3, Cf4, Cf5] - характеристики
+    C - концентрация загрязняющих веществ
     t - время (для возмущений x1-x6)
-    faks - матрица коэффициентов возмущений [14 x 2] й
+    faks - матрица коэффициентов возмущений [14 x 2]
     f - матрица коэффициентов внутренних функций [12 x ...]
     xm - масштабирующие коэффициенты (максимальные значения/пределы)
-    power - степень для нормализации 
+    power - степень для нормализации (увеличена для меньшего сжатия)
     """
     eps = 1e-4
     x_safe = np.clip(x, eps, 1.0 - eps)
-
-    def normalize_value(value, max_possible=10.0):
+    
+    def normalize_value(value, max_possible=5.0):  # Уменьшен max_possible
         return max(0.0, min(1.0, value / max_possible))
     
     # === ВОЗМУЩЕНИЯ x1-x6 (зависят от времени t) ===
@@ -91,16 +92,15 @@ def pend(x, C, faks, f, xm, t=0.0, power=0.55):
         x14 = 0.0
     
     # === ВНУТРЕННИЕ ФУНКЦИИ ===
- 
     # f₁: логистическая (2 параметра)
     if len(f) > 0 and len(f[0]) >= 2:
-        f1 = f1_cf3_norm(x_safe[2], f[0][0], f[0][1]) 
+        f1 = f1_cf3_norm(x_safe[2], f[0][0], f[0][1])
     else:
         f1 = f1_cf3_default_norm(x_safe[2])
     
     # f₂: линейная (2 параметра)
     if len(f) > 1 and len(f[1]) >= 2:
-        f2 = f2_cf4_norm(x_safe[3], f[1][0], f[1][1]) 
+        f2 = f2_cf4_norm(x_safe[3], f[1][0], f[1][1])
     else:
         f2 = f2_cf4_default_norm(x_safe[3])
     
@@ -112,163 +112,157 @@ def pend(x, C, faks, f, xm, t=0.0, power=0.55):
     
     # f₄: линейная (2 параметра)
     if len(f) > 3 and len(f[3]) >= 2:
-        f4 = f4_cf3_norm(x_safe[2], f[3][0], f[3][1]) 
+        f4 = f4_cf3_norm(x_safe[2], f[3][0], f[3][1])
     else:
         f4 = f4_cf3_default_norm(x_safe[2])
     
     # f₅: линейная (2 параметра)
     if len(f) > 4 and len(f[4]) >= 2:
-        f5 = f5_cf4_norm(x_safe[3], f[4][0], f[4][1]) 
+        f5 = f5_cf4_norm(x_safe[3], f[4][0], f[4][1])
     else:
         f5 = f5_cf4_default_norm(x_safe[3])
     
     # f₆: дробная (2 параметра)
     if len(f) > 5 and len(f[5]) >= 2:
-        f6 = f6_cf5_norm(x_safe[4], f[5][0], f[5][1]) 
+        f6 = f6_cf5_norm(x_safe[4], f[5][0], f[5][1])
     else:
         f6 = f6_cf5_default_norm(x_safe[4])
     
     # f₇: дробная (2 параметра)
     if len(f) > 6 and len(f[6]) >= 2:
-        f7 = f7_cf5_norm(x_safe[4], f[6][0], f[6][1])  
+        f7 = f7_cf5_norm(x_safe[4], f[6][0], f[6][1])
     else:
         f7 = f7_cf5_default_norm(x_safe[4])
     
     # f₈: линейная (2 параметра)
     if len(f) > 7 and len(f[7]) >= 2:
-        f8 = f8_cf1_norm(x_safe[0], f[7][0], f[7][1]) 
+        f8 = f8_cf1_norm(x_safe[0], f[7][0], f[7][1])
     else:
         f8 = f8_cf1_default_norm(x_safe[0])
     
-    # f₉: логистическая 
+    # f₉: логистическая
     if len(f) > 8 and len(f[8]) >= 2:
-        f9 = f9_cf2_norm(x_safe[1], f[8][0], f[8][1]) 
+        f9 = f9_cf2_norm(x_safe[1], f[8][0], f[8][1])
     else:
         f9 = f9_cf2_default_norm(x_safe[1])
     
     # f₁₀: линейная (2 параметра)
     if len(f) > 9 and len(f[9]) >= 2:
-        f10 = f10_cf3_norm(x_safe[2], f[9][0], f[9][1])  
+        f10 = f10_cf3_norm(x_safe[2], f[9][0], f[9][1])
     else:
         f10 = f10_cf3_default_norm(x_safe[2])
     
     # f₁₁: дробная (3 параметра)
     if len(f) > 10 and len(f[10]) >= 3:
-        f11 = f11_cf5_norm(x_safe[4], f[10][0], f[10][1], f[10][2]) 
+        f11 = f11_cf5_norm(x_safe[4], f[10][0], f[10][1], f[10][2])
     else:
         f11 = f11_cf5_default_norm(x_safe[4])
     
     # f₁₂: линейная (2 параметра)
     if len(f) > 11 and len(f[11]) >= 2:
-        f12 = f12_cf1_norm(x_safe[0], f[11][0], f[11][1])  
+        f12 = f12_cf1_norm(x_safe[0], f[11][0], f[11][1])
     else:
         f12 = f12_cf1_default_norm(x_safe[0])
     
     # === СИСТЕМА УРАВНЕНИЙ ===
-    
     # Уравнение 1: dCf1/dC (потери от заболеваемости)
     sum_pos = x1 + x4 + x5 + x7 + x8 + x9 + x10 + x11 + x12 + x13
     sum_neg = x2 + x3 + x6 + x14
     
-    # Enhanced normalization using sigmoid for more natural curves
-    def sigmoid_norm(x, scale=1.0, shift=0.0, steepness=5.0):
-        return 1.0 / (1.0 + np.exp(-steepness * (x - shift))) * scale
+    # Упрощенная нормализация с меньшим сжатием
+    def soft_norm(x, divisor=8.0):  # Уменьшен делитель
+        return min(1.0, (x / divisor) ** power)
     
-    # Apply sigmoid normalization with different parameters for positive and negative terms
-    norm_sum_pos = sigmoid_norm(sum_pos, scale=1.0, shift=3.0, steepness=0.3)
-    norm_sum_neg = sigmoid_norm(sum_neg, scale=1.0, shift=1.5, steepness=0.5)
+    # Применяем более мягкую нормализацию
+    norm_sum_pos = soft_norm(sum_pos, divisor=8.0)  # Было 10.0
+    norm_sum_neg = soft_norm(sum_neg, divisor=4.0)  # Было 4.0 (оставил)
     
     dCf1_dC = (1 / xm[0]) * (
-        f1 * f2 * norm_sum_pos -
-        f3 * norm_sum_neg
+        f1 * f2 * norm_sum_pos - f3 * norm_sum_neg
     )
     
     # Уравнение 2: dCf2/dC (потери сельского хозяйства)
     sum_pos2 = x1 + x4 + x9 + x10 + x12
     sum_neg2 = x2 + x3 + x5 + x6
-    # Apply sigmoid normalization for the second set of terms
-    norm_sum_pos2 = sigmoid_norm(sum_pos2, scale=1.0, shift=2.0, steepness=0.4)
-    norm_sum_neg2 = sigmoid_norm(sum_neg2, scale=1.0, shift=1.5, steepness=0.6)
+    
+    norm_sum_pos2 = soft_norm(sum_pos2, divisor=6.0)  # Уменьшен делитель
+    norm_sum_neg2 = soft_norm(sum_neg2, divisor=4.0)
     
     dCf2_dC = (1 / xm[1]) * (
-        f4 * f5 * norm_sum_pos2 -
-        f6 * norm_sum_neg2
+        f4 * f5 * norm_sum_pos2 - f6 * norm_sum_neg2
     )
     
     # Уравнение 3: dCf3/dC (потери от изменения природы)
     sum_pos3 = x1 + x4 + x5 + x7 + x8 + x9 + x10 + x11 + x12
     sum_neg3 = x2 + x3 + x6 + x14
-    # Apply sigmoid normalization for the third set of terms
-    norm_sum_pos3 = sigmoid_norm(sum_pos3, scale=1.0, shift=3.5, steepness=0.35)
-    norm_sum_neg3 = sigmoid_norm(sum_neg3, scale=1.0, shift=1.5, steepness=0.5)
+    
+    norm_sum_pos3 = soft_norm(sum_pos3, divisor=9.0)  # Уменьшен делитель
+    norm_sum_neg3 = soft_norm(sum_neg3, divisor=4.0)
     
     dCf3_dC = (1 / xm[2]) * (
-        norm_sum_pos3 -
-        f7 * norm_sum_neg3
+        norm_sum_pos3 - f7 * norm_sum_neg3
     )
     
     # Уравнение 4: dCf4/dC (потери от ухудшения качества жизни)
     sum_pos4 = x1 + x4 + x5 + x7 + x8 + x9 + x10 + x11 + x12 + x13
     sum_neg4 = x2 + x3 + x6 + x14
-    norm_sum_pos4 = min(1.0, (sum_pos4 / 10.0) ** power)
-    norm_sum_neg4 = min(1.0, (sum_neg4 / 4.0) ** power)
+    
+    norm_sum_pos4 = soft_norm(sum_pos4, divisor=10.0)  # Уменьшен делитель
+    norm_sum_neg4 = soft_norm(sum_neg4, divisor=4.0)
     
     dCf4_dC = (1 / xm[3]) * (
-        f8 * f9 * f10 * norm_sum_pos4 -
-        f11 * norm_sum_neg4
+        f8 * f9 * f10 * norm_sum_pos4 - f11 * norm_sum_neg4
     )
     
     # Уравнение 5: dCf5/dC (потери предприятия)
     sum_pos5 = x1 + x5
     sum_neg5 = x2 + x3 + x4 + x6 + x7 + x8 + x9 + x10 + x13 + x14
-    norm_sum_pos5 = min(1.0, (sum_pos5 / 2.0) ** power)
-    norm_sum_neg5 = min(1.0, (sum_neg5 / 10.0) ** power)
+    
+    norm_sum_pos5 = soft_norm(sum_pos5, divisor=2.5)  # Уменьшен делитель
+    norm_sum_neg5 = soft_norm(sum_neg5, divisor=12.0)  # Увеличен делитель для негативных
     
     dCf5_dC = (1 / xm[4]) * (
-        f12 * norm_sum_pos5 -
-        norm_sum_neg5
+        f12 * norm_sum_pos5 - norm_sum_neg5
     )
     
     dkdt = [dCf1_dC, dCf2_dC, dCf3_dC, dCf4_dC, dCf5_dC]
     
-
+    # Граничные условия
     for i in range(len(dkdt)):
         if x[i] >= xm[i] - eps and dkdt[i] > 0:
-            dkdt[i] = 0.0 
+            dkdt[i] = 0.0
         elif abs(x[i] - xm[i]) < eps and dkdt[i] > 0:
             dkdt[i] = 0.0
     
-
     for i in range(len(dkdt)):
         if x[i] <= eps and dkdt[i] < 0:
             dkdt[i] = 0.0
         if x[i] >= 1.0 - eps and dkdt[i] > 0:
             dkdt[i] = 0.0
-
+    
     return dkdt
 
 def fx_linear(x, params):
     if len(params) >= 2:
         a, b = params[0], params[1]
         value = a * x + b
-        max_possible = abs(a) * 1.0 + abs(b)
+        # Уменьшена нормализация
+        max_possible = abs(a) * 2.0 + abs(b)  # Увеличен множитель
         if max_possible > 0:
             normalized = max(0.0, min(1.0, value / max_possible))
         else:
             normalized = 0.5
-            
         return normalized
     elif len(params) == 1:
         return max(0.0, min(1.0, params[0]))
     else:
         return 0.5
 
-
-
 # f₁(Cf₃) = a·e^{Cf₃} / (1 + b·(e^{Cf₃} - 1))
 def f1_cf3_norm(cf3, a=0.5, b=0.5):
     raw = a * np.exp(cf3) / (1 + b * (np.exp(cf3) - 1))
-    return max(0.0, min(1.0, raw))
+    # Уменьшена нормализация
+    return max(0.0, min(1.0, raw * 1.2))  # Увеличен множитель
 
 def f1_cf3_default_norm(cf3):
     return f1_cf3_norm(cf3, 0.5, 0.5)
@@ -276,7 +270,7 @@ def f1_cf3_default_norm(cf3):
 # f₂(Cf₄) = a·Cf₄ + b
 def f2_cf4_norm(cf4, a=0.3, b=15.0):
     raw = a * cf4 + b
-    denominator = abs(a) + abs(b)
+    denominator = abs(a) * 2.0 + abs(b)  # Увеличен множитель
     if denominator > 0:
         return max(0.0, min(1.0, raw / denominator))
     return 0.5
@@ -297,7 +291,7 @@ def f3_cf5_default_norm(cf5):
 # f₄(Cf₃) = a·Cf₃ + b
 def f4_cf3_norm(cf3, a=0.7, b=11.0):
     raw = a * cf3 + b
-    denominator = abs(a) + abs(b)
+    denominator = abs(a) * 2.0 + abs(b)  # Увеличен множитель
     if denominator > 0:
         return max(0.0, min(1.0, raw / denominator))
     return 0.5
@@ -308,7 +302,7 @@ def f4_cf3_default_norm(cf3):
 # f₅(Cf₄) = a·Cf₄ + b
 def f5_cf4_norm(cf4, a=0.8, b=9.0):
     raw = a * cf4 + b
-    denominator = abs(a) + abs(b)
+    denominator = abs(a) * 2.0 + abs(b)  # Увеличен множитель
     if denominator > 0:
         return max(0.0, min(1.0, raw / denominator))
     return 0.5
@@ -322,7 +316,7 @@ def f6_cf5_norm(cf5, a=0.8, b=12.0):
     raw = a / denominator
     max_val = a / b if b > 0 else 10.0
     if max_val > 0:
-        return max(0.0, min(1.0, raw / max_val))
+        return max(0.0, min(1.0, raw / max_val * 1.2))  # Увеличен множитель
     return 0.5
 
 def f6_cf5_default_norm(cf5):
@@ -334,7 +328,7 @@ def f7_cf5_norm(cf5, a=0.8, b=11.0):
     raw = a / denominator
     max_val = a / b if b > 0 else 10.0
     if max_val > 0:
-        return max(0.0, min(1.0, raw / max_val))
+        return max(0.0, min(1.0, raw / max_val * 1.2))  # Увеличен множитель
     return 0.5
 
 def f7_cf5_default_norm(cf5):
@@ -343,7 +337,7 @@ def f7_cf5_default_norm(cf5):
 # f₈(Cf₁) = a·Cf₁ + b
 def f8_cf1_norm(cf1, a=0.7, b=13.0):
     raw = a * cf1 + b
-    denominator = abs(a) + abs(b)
+    denominator = abs(a) * 2.0 + abs(b)  # Увеличен множитель
     if denominator > 0:
         return max(0.0, min(1.0, raw / denominator))
     return 0.5
@@ -352,18 +346,18 @@ def f8_cf1_default_norm(cf1):
     return f8_cf1_norm(cf1, 0.7, 13.0)
 
 # f₉(Cf₂) = 1 / (1 + e^{-Cf₂})
-def f9_cf2_norm(cf2, scale=10.0, shift=5.0):
+def f9_cf2_norm(cf2, scale=8.0, shift=4.0):  # Уменьшены параметры
     scaled_cf2 = cf2 * scale - shift
     raw = 1 / (1 + np.exp(-scaled_cf2))
     return max(0.0, min(1.0, raw))
 
 def f9_cf2_default_norm(cf2):
-    return f9_cf2_norm(cf2, 10.0, 5.0)
+    return f9_cf2_norm(cf2, 8.0, 4.0)  # Уменьшены параметры
 
 # f₁₀(Cf₃) = a·Cf₃ + b
 def f10_cf3_norm(cf3, a=0.55, b=13.0):
     raw = a * cf3 + b
-    denominator = abs(a) + abs(b)
+    denominator = abs(a) * 2.0 + abs(b)  # Увеличен множитель
     if denominator > 0:
         return max(0.0, min(1.0, raw / denominator))
     return 0.5
@@ -377,7 +371,7 @@ def f11_cf5_norm(cf5, a=0.55, b=12.0, c=2.0):
     raw = a / denominator + c
     max_val = (a / b + c) if b > 0 else (a / 0.01 + c)
     if max_val > 0:
-        return max(0.0, min(1.0, raw / max_val))
+        return max(0.0, min(1.0, raw / max_val * 1.1))  # Увеличен множитель
     return 0.5
 
 def f11_cf5_default_norm(cf5):
@@ -386,15 +380,13 @@ def f11_cf5_default_norm(cf5):
 # f₁₂(Cf₁) = a·Cf₁ + b
 def f12_cf1_norm(cf1, a=0.5, b=3.0):
     raw = a * cf1 + b
-    denominator = abs(a) + abs(b)
+    denominator = abs(a) * 2.0 + abs(b)  # Увеличен множитель
     if denominator > 0:
         return max(0.0, min(1.0, raw / denominator))
     return 0.5
 
 def f12_cf1_default_norm(cf1):
     return f12_cf1_norm(cf1, 0.5, 3.0)
-
-
 
 def calculate_total_loss(Cf_values, weights=None):
     """
@@ -411,9 +403,7 @@ def calculate_total_loss(Cf_values, weights=None):
     
     return max(0.0, min(1.0, total_loss))
 
-
 def normalize_values(values, max_values=None):
-  
     if max_values is None:
         max_values = [1.0] * len(values)
     
@@ -423,9 +413,7 @@ def normalize_values(values, max_values=None):
             norm_val = values[i] / max_values[i]
         else:
             norm_val = values[i]
-        
         norm_val = max(0.0, min(1.0, norm_val))
         normalized.append(norm_val)
     
     return normalized
-
