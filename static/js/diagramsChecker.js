@@ -10,7 +10,7 @@ if (status !== "Выполнено") {
         </div>
     `
 } else {
-    const diagrams = ['diagram1', 'diagram2', 'diagram3', 'diagram4', 'diagram5']
+    const diagrams = ['diagram1', 'diagram2', 'diagram3', 'diagram4', 'diagram5', 'diagram6']
     
     diagrams.forEach((id, index) => {
         const img = document.getElementById(id)

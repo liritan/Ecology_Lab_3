@@ -4,6 +4,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.integrate import odeint
+from scipy.interpolate import PchipInterpolator
+from scipy.interpolate import make_interp_spline
 import logging
 
 from functions import pend, calculate_total_loss, fx_linear  
@@ -20,27 +22,25 @@ def fill_diagrams(data, initial_equations, restrictions):
     clipped_restrictions = np.clip(restrictions, 0, 1.0)
 
     conc_indices = [
-        0,                    # C = 0
-        int(len(data) / 4),   # C = 0.25
-        int(len(data) / 2),   # C = 0.5
-        int(3 * len(data) / 4), # C = 0.75
-        -1                    # C = 1.0
+        0,                                # C = 0.0
+        int(len(data) * 1/6),            # C ≈ 0.1667
+        int(len(data) * 2/6),            # C ≈ 0.3333
+        int(len(data) * 3/6),            # C = 0.5
+        int(len(data) * 4/6),            # C ≈ 0.6667
+        -1                                # C = 1.0
     ]
     
-    titles = [
-        "Характеристики при C = 0 (начальная концентрация)",
-        "Характеристики при C = 0.25",
-        "Характеристики при C = 0.5", 
-        "Характеристики при C = 0.75",
-        "Характеристики при C = 1.0 (максимальная концентрация)"
-    ]
+    c_values = [0.0, 1/6, 2/6, 3/6, 4/6, 1.0]
+    # Форматируем значения с запятой в качестве разделителя дробной части
+    titles = [f"C = {c:.4f}".replace('.', ',') for c in c_values]
     
     filenames = [
         './static/images/diagram_eco.png',
         './static/images/diagram_eco2.png',
         './static/images/diagram_eco3.png',
         './static/images/diagram_eco4.png',
-        './static/images/diagram_eco5.png'
+        './static/images/diagram_eco5.png',
+        './static/images/diagram_eco6.png'
     ]
 
     for i, (idx, title, fname) in enumerate(zip(conc_indices, titles, filenames)):
@@ -86,8 +86,38 @@ def create_graphic(C, data):
     label_positions_x = np.linspace(0.1, 0.4, num_lines)
     
     for i in range(5):
+
         y_data = np.clip(data[:, i], 0, 1.0)
-        ax.plot(C, y_data, color=colors[i], linewidth=2.5, label=labels[i])
+
+
+        for j in range(1, len(y_data)):
+            y_data[j] = max(y_data[j], y_data[j-1])
+
+    
+        gamma_cf = [2.8, 2.2, 1.6, 3.0, 2.0]  # можно одинаковые
+        y_data = y_data ** (1 / gamma_cf[i])
+        
+        
+        # Обеспечиваем монотонное возрастание
+        
+        # Создаем сглаженную версию графика с помощью сплайнов
+        if len(C) > 3:  # Для сплайна нужно минимум 4 точки
+            # Увеличиваем количество точек для более плавного графика
+            C_smooth = np.linspace(C.min(), C.max(), 200)
+            
+            # Создаем сплайн с небольшим сглаживанием (s=0.5)
+            interp = PchipInterpolator(C, y_data)  # k=3 для кубического сплайна
+            y_smooth = interp(C_smooth)
+            
+            # Убедимся, что сплайн не выходит за границы [0, 1]
+            y_smooth = np.clip(y_smooth, 0, 1.0)
+            
+            # Строим сглаженный график
+            ax.plot(C_smooth, y_smooth, color=colors[i], linewidth=2.5, label=labels[i])
+        else:
+            # Если точек слишком мало для сплайна, рисуем обычный график
+            ax.plot(C, y_data, color=colors[i], linewidth=2.5, label=labels[i])
+        
         x_pos = label_positions_x[i]
  
         closest_idx = np.argmin(np.abs(C - x_pos))
@@ -172,6 +202,10 @@ def create_graphic(C, data):
     plt.tight_layout(pad=3.0)
     fig.savefig('./static/images/figure_eco.png', bbox_inches='tight', dpi=150)
     plt.close(fig)
+
+
+
+
 
 
 def cast_to_float(initial_equations, faks, equations, restrictions):
@@ -297,10 +331,13 @@ def create_disturbances_graphic(C, faks, time_value=0.0):
     for i in range(6, min(10, len(faks))):
         if i < len(faks) and len(faks[i]) >= 2:
             curve = []
+            max_val = 0.0
             for c_val in C:
                 value = fx_linear(c_val, faks[i])
                 value = max(0.0, min(1.0, value))
-                curve.append(value)
+                # Обеспечиваем монотонное возрастание
+                max_val = max(max_val, value)
+                curve.append(max_val)
             curves_1.append((i, curve))
     
     num_curves_1 = len(curves_1)
@@ -383,10 +420,13 @@ def create_disturbances_graphic(C, faks, time_value=0.0):
     for i in range(10, min(14, len(faks))):
         if i < len(faks) and len(faks[i]) >= 2:
             curve = []
+            max_val = 0.0
             for c_val in C:
                 value = fx_linear(c_val, faks[i])
                 value = max(0.0, min(1.0, value))
-                curve.append(value)
+                # Обеспечиваем монотонное возрастание
+                max_val = max(max_val, value)
+                curve.append(max_val)
             curves_2.append((i, curve))
 
     num_curves_2 = len(curves_2)

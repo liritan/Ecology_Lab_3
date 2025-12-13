@@ -121,6 +121,12 @@ class RadarDiagram:
                 ax.text(angle, value * 1.02, f'{value:.2f}', 
                     color='green', fontsize=9, ha='center', va='bottom')
 
-        fig.text(0.5, 0.965, title, horizontalalignment='center', color='black', weight='bold', size='large')
+        # Устанавливаем заголовок с русскими символами
+        fig.text(0.5, 0.965, title, 
+                horizontalalignment='center', 
+                color='black', 
+                weight='bold', 
+                size='large',
+                fontproperties={'family': 'DejaVu Sans', 'size': 12})
         fig.savefig(filename, bbox_inches='tight')
         plt.close(fig)
