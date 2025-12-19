@@ -9,7 +9,7 @@ python app.py
 
  Ссылка на проект
 
-[(https://3laba.pythonanywhere.com/)]
+https://3laba.pythonanywhere.com/
 
 Авторы
 
