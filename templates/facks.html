@@ -6,6 +6,20 @@
     <title>Внешние возмущения системы</title>
     <link href="/static/css/style.css" rel="stylesheet">
     <style>
+        .chi-symbol {
+            font-size: 1.3em;
+            font-weight: bold;
+            font-family: 'Times New Roman', serif;
+            color: rgb(111, 179, 243); /* Голубой цвет для символов в списках */
+        }
+        
+        .chi-symbol-black {
+            font-size: 1.3em;
+            font-weight: bold;
+            font-family: 'Times New Roman', serif;
+            color: #2c3e50; /* Черный цвет для символов в легенде */
+        }
+        
         .disturbances-section {
             background-color: white;
             border-radius: 10px;
@@ -75,7 +89,7 @@
         }
         
         .disturbance-list li {
-            padding: 8px 0;
+            padding: 12px 0;
             border-bottom: 1px solid #f5f5f5;
             display: flex;
             align-items: flex-start;
@@ -87,17 +101,30 @@
         
         .disturbance-symbol {
             font-weight: bold;
-            color: rgb(111, 179, 243);
-            min-width: 50px;
-            font-family: monospace;
+            color: rgb(111, 179, 243); /* Голубой цвет */
+            min-width: 70px;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1em;
+            line-height: 1.4;
         }
         
         .disturbance-desc {
             flex: 1;
+            line-height: 1.4;
         }
         
         .disturbance-desc strong {
             color: #2c3e50;
+            font-size: 14.5px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .disturbance-desc br + span {
+            color: #666;
+            font-size: 13.5px;
+            display: block;
+            margin-top: 2px;
         }
         
         .no-data-message {
@@ -145,6 +172,7 @@
             display: inline-block;
             margin-right: 20px;
             margin-bottom: 10px;
+            font-size: 14px;
         }
         
         .legend-color {
@@ -179,6 +207,42 @@
         .graphic-1 { border-top-color: #1f77b4; }
         .graphic-2 { border-top-color: #e377c2; }
         .graphic-3 { border-top-color: #ff1493; }
+        
+        .chi-index {
+            font-size: 0.9em;
+            position: relative;
+            bottom: -0.2em;
+            color: rgb(111, 179, 243); /* Голубой цвет для индексов в списках */
+        }
+        
+        .chi-index-black {
+            font-size: 0.9em;
+            position: relative;
+            bottom: -0.2em;
+            color: #2c3e50; /* Черный цвет для индексов в легенде */
+        }
+        
+        .info-box p {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .explanation-text p {
+            font-size: 14.5px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        
+        .explanation-text strong {
+            color: #2c3e50;
+        }
+        
+        .disturbance-text {
+            color: #666;
+            font-size: 13.5px;
+            margin-top: 3px;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -211,23 +275,19 @@
                     <div style="margin-top: 10px;">
                         <div class="legend-item">
                             <span class="legend-color" style="background-color: #1f77b4;"></span>
-                            <span><strong>Зависящие от времени (χ₁-χ₆):</strong> Постоянные значения на интервале</span>
+                            <span><strong><span class="chi-symbol-black">χ</span><span class="chi-index-black">₁</span>-<span class="chi-symbol-black">χ</span><span class="chi-index-black">₆</span>:</strong> Зависящие от времени (постоянные значения на интервале)</span>
                         </div>
                         <div class="legend-item">
                             <span class="legend-color" style="background-color: #e377c2;"></span>
-                            <span><strong>Зависящие от концентрации (χ₇-χ₁₄)</strong> </span>
+                            <span><strong><span class="chi-symbol-black">χ</span><span class="chi-index-black">₇</span>-<span class="chi-symbol-black">χ</span><span class="chi-index-black">₁₄</span>:</strong> Зависящие от концентрации</span>
                         </div>
-                        
                     </div>
                 </div>
                 
                 <div class="image-container" id="disturbances-container">
-                
                     <img src="/static/images/disturbances_eco.png" id="disturbances-image" class="graphic-img"
                          onerror="this.style.display='none'">
                 </div>
-                
-              
                 
                 <div class="disturbances-info">
                     <div class="disturbances-grid">
@@ -235,45 +295,57 @@
                             <h3>Возмущения, зависящие от времени (постоянные)</h3>
                             <ul class="disturbance-list">
                                 <li>
-                                    <span class="disturbance-symbol">χ₁(t)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₁</span>(t)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Износ технологического оборудования</strong><br>
-                                        Влияет на эффективность работы предприятия
+                                        <strong>Износ технологического оборудования</strong>
+                                        <span class="disturbance-text">Влияет на эффективность работы предприятия</span>
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="disturbance-symbol">χ₂(t)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₂</span>(t)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Возможность использования кредитных ресурсов</strong><br>
-                                        Влияет на инвестиции в экологические технологии
+                                        <strong>Возможность использования кредитных ресурсов</strong>
+                                        <span class="disturbance-text">Влияет на инвестиции в экологические технологии</span>
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="disturbance-symbol">χ₃(t)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₃</span>(t)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Привлечение зарубежных инвесторов</strong><br>
-                                        Влияет на развитие предприятия и внедрение новых технологий
+                                        <strong>Привлечение зарубежных инвесторов</strong>
+                                        <span class="disturbance-text">Влияет на развитие предприятия и внедрение новых технологий</span>
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="disturbance-symbol">x₄(t)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₄</span>(t)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Спрос на продукцию предприятия</strong><br>
-                                        Влияет на объем производства и выбросов
+                                        <strong>Спрос на продукцию предприятия</strong>
+                                        <span class="disturbance-text">Влияет на объем производства и выбросов</span>
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="disturbance-symbol">χ₅(t)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₅</span>(t)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Сложность найма сотрудников</strong><br>
-                                        Влияет на качество управления процессами
+                                        <strong>Сложность найма сотрудников</strong>
+                                        <span class="disturbance-text">Влияет на качество управления процессами</span>
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="disturbance-symbol">χ₆(t)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₆</span>(t)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Деловая репутация компании</strong><br>
-                                        Влияет на отношение общества и регуляторов
+                                        <strong>Деловая репутация компании</strong>
+                                        <span class="disturbance-text">Влияет на отношение общества и регуляторов</span>
                                     </div>
                                 </li>
                             </ul>
@@ -283,71 +355,86 @@
                             <h3>Возмущения, зависящие от концентрации</h3>
                             <ul class="disturbance-list">
                                 <li>
-                                    <span class="disturbance-symbol">χ₇(C)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₇</span>(C)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Повышенный уровень смога</strong><br>
-                                        Усиливает негативное воздействие на здоровье
+                                        <strong>Повышенный уровень смога</strong>
+                                        <span class="disturbance-text">Усиливает негативное воздействие на здоровье</span>
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="disturbance-symbol">χ₈(C)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₈</span>(C)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Высокая задымленность от лесных пожаров</strong><br>
-                                        Дополнительный источник загрязнения
+                                        <strong>Высокая задымленность от лесных пожаров</strong>
+                                        <span class="disturbance-text">Дополнительный источник загрязнения</span>
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="disturbance-symbol">χ₉(C)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₉</span>(C)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Продолжительный летний антициклон</strong><br>
-                                        Ухудшает рассеивание загрязняющих веществ
+                                        <strong>Продолжительный летний антициклон</strong>
+                                        <span class="disturbance-text">Ухудшает рассеивание загрязняющих веществ</span>
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="disturbance-symbol">χ₁₀(C)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₁₀</span>(C)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Продолжительный зимний антициклон</strong><br>
-                                        Способствует накоплению загрязнений
+                                        <strong>Продолжительный зимний антициклон</strong>
+                                        <span class="disturbance-text">Способствует накоплению загрязнений</span>
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="disturbance-symbol">χ₁₁(C)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₁₁</span>(C)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Высокая загруженность автомагистралей</strong><br>
-                                        Источник дополнительных выбросов автотранспорта
+                                        <strong>Высокая загруженность автомагистралей</strong>
+                                        <span class="disturbance-text">Источник дополнительных выбросов автотранспорта</span>
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="disturbance-symbol">χ₁₂(C)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₁₂</span>(C)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Наличие крупных промышленных предприятий</strong><br>
-                                        Фоновое загрязнение территории
+                                        <strong>Наличие крупных промышленных предприятий</strong>
+                                        <span class="disturbance-text">Фоновое загрязнение территории</span>
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="disturbance-symbol">χ₁₃(C)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₁₃</span>(C)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Эпидемиологическая ситуация</strong><br>
-                                        Влияет на уязвимость населения
+                                        <strong>Эпидемиологическая ситуация</strong>
+                                        <span class="disturbance-text">Влияет на уязвимость населения</span>
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="disturbance-symbol">χ₁₄(C)</span>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₁₄</span>(C)
+                                    </div>
                                     <div class="disturbance-desc">
-                                        <strong>Наличие санкций</strong><br>
-                                        Влияет на хозяйственную деятельность предприятия
+                                        <strong>Наличие санкций</strong>
+                                        <span class="disturbance-text">Влияет на хозяйственную деятельность предприятия</span>
                                     </div>
                                 </li>
                             </ul>
                         </div>
                     </div>
                     
-                    <div style="margin-top: 30px; padding: 20px; background-color: rgba(213, 233, 253, 0.47); border-radius: 8px; border-left: 4px solid rgb(111, 179, 243);">
+                    <div class="explanation-text" style="margin-top: 30px; padding: 20px; background-color: rgba(213, 233, 253, 0.47); border-radius: 8px; border-left: 4px solid rgb(111, 179, 243);">
                         <h3 style="margin-top: 0; color:rgb(111, 179, 243);">Как читать график:</h3>
-                        <p><strong>График 1 (верхний):</strong> Показывает постоянные значения возмущений χ₁-χ₆ (горизонтальные линии). Высота линии соответствует значению возмущения в диапазоне [0, 1].</p>
-                        <p><strong>График 2 (средний):</strong> Показывает, как  значения χ₇-χ₁₀ изменяются в зависимости от концентрации загрязняющих веществ (C).</p>
-                        <p><strong>График 3 (нижний):</strong> Показывает, как значения χ₁₁-χ₁₄ изменяются в зависимости от концентрации загрязняющих веществ (C).</p>
-                
+                        <p><strong>График 1 (верхний):</strong> Показывает постоянные значения возмущений <span class="chi-symbol-black">χ</span><span class="chi-index-black">₁</span>-<span class="chi-symbol-black">χ</span><span class="chi-index-black">₆</span> (горизонтальные линии). Высота линии соответствует значению возмущения в диапазоне [0, 1].</p>
+                        <p><strong>График 2 (средний):</strong> Показывает, как значения <span class="chi-symbol-black">χ</span><span class="chi-index-black">₇</span>-<span class="chi-symbol-black">χ</span><span class="chi-index-black">₁₀</span> изменяются в зависимости от концентрации загрязняющих веществ (C).</p>
+                        <p><strong>График 3 (нижний):</strong> Показывает, как значения <span class="chi-symbol-black">χ</span><span class="chi-index-black">₁₁</span>-<span class="chi-symbol-black">χ</span><span class="chi-index-black">₁₄</span> изменяются в зависимости от концентрации загрязняющих веществ (C).</p>
                     </div>
                 </div>
             </div>
