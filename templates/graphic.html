@@ -3,10 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>График характеристик</title>
+    <title>Внешние возмущения системы</title>
     <link href="/static/css/style.css" rel="stylesheet">
     <style>
-        .graphic-section {
+        .chi-symbol {
+            font-size: 1.3em;
+            font-weight: bold;
+            font-family: 'Times New Roman', serif;
+            color: rgb(111, 179, 243); /* Голубой цвет для символов в списках */
+        }
+        
+        .chi-symbol-black {
+            font-size: 1.3em;
+            font-weight: bold;
+            font-family: 'Times New Roman', serif;
+            color: #2c3e50; /* Черный цвет для символов в легенде */
+        }
+        
+        .disturbances-section {
             background-color: white;
             border-radius: 10px;
             padding: 25px;
@@ -17,8 +31,14 @@
         .page-title {
             color: #2c3e50;
             margin-bottom: 10px;
-            border-bottom: 2px solid #3498db;
+            border-bottom: 2px solid rgb(111, 179, 243);
             padding-bottom: 10px;
+        }
+        
+        .page-subtitle {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 16px;
         }
         
         .graphic-img {
@@ -37,43 +57,74 @@
             border-radius: 8px;
         }
         
-        .graphic-info {
-            background-color: #e8f4fc;
+        .disturbances-info {
+            margin-top: 30px;
+        }
+        
+        .disturbances-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .disturbance-type {
+            background-color: white;
             padding: 20px;
             border-radius: 8px;
-            margin-top: 20px;
-            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            border-top: 4px solid rgb(111, 179, 243);
         }
         
-        .graphic-info h3 {
+        .disturbance-type h3 {
             color: #2c3e50;
             margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
         
-        .variables-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+        .disturbance-list {
+            list-style-type: none;
+            padding-left: 0;
         }
         
-        .variable-item {
-            background-color: white;
-            padding: 12px;
-            border-radius: 6px;
-            border-left: 4px solid #3498db;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        .disturbance-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            align-items: flex-start;
         }
         
-        .variable-name {
+        .disturbance-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .disturbance-symbol {
             font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 5px;
+            color: rgb(111, 179, 243); /* Голубой цвет */
+            min-width: 70px;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1em;
+            line-height: 1.4;
         }
         
-        .variable-desc {
-            font-size: 14px;
-            color: #555;
+        .disturbance-desc {
+            flex: 1;
+            line-height: 1.4;
+        }
+        
+        .disturbance-desc strong {
+            color: #2c3e50;
+            font-size: 14.5px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .disturbance-desc br + span {
+            color: #666;
+            font-size: 13.5px;
+            display: block;
+            margin-top: 2px;
         }
         
         .no-data-message {
@@ -95,7 +146,7 @@
         }
         
         .btn-back {
-            background-color: #3498db;
+            background-color: rgb(111, 179, 243);
             color: white;
             padding: 10px 20px;
             border: none;
@@ -106,30 +157,91 @@
         }
         
         .btn-back:hover {
-            background-color: #2980b9;
+            background-color: rgb(111, 179, 243);
         }
         
-        .legend-box {
+        .info-box {
+            background-color: rgba(213, 233, 253, 0.47);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border-left: 4px solid rgb(111, 179, 243);
+        }
+        
+        .legend-item {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            margin-right: 8px;
+            margin-right: 20px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .legend-color {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
             vertical-align: middle;
             border-radius: 3px;
         }
         
-        .sub {
-            font-size: 12px;
-            position: relative;
-            bottom: -0.2em;
+        .graphics-explanation {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
         
-        .graphic-explanation {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f1f8e9;
-            border-radius: 6px;
-            border-left: 4px solid #7cb342;
+        .graphic-explanation-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-top: 4px solid;
+        }
+        
+        .graphic-explanation-box h4 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .graphic-1 { border-top-color: #1f77b4; }
+        .graphic-2 { border-top-color: #e377c2; }
+        .graphic-3 { border-top-color: #ff1493; }
+        
+        .chi-index {
+            font-size: 0.9em;
+            position: relative;
+            bottom: -0.2em;
+            color: rgb(111, 179, 243); /* Голубой цвет для индексов в списках */
+        }
+        
+        .chi-index-black {
+            font-size: 0.9em;
+            position: relative;
+            bottom: -0.2em;
+            color: #2c3e50; /* Черный цвет для индексов в легенде */
+        }
+        
+        .info-box p {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .explanation-text p {
+            font-size: 14.5px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        
+        .explanation-text strong {
+            color: #2c3e50;
+        }
+        
+        .disturbance-text {
+            color: #666;
+            font-size: 13.5px;
+            margin-top: 3px;
+            display: block;
         }
     </style>
 </head>
@@ -141,89 +253,194 @@
                 <a class="nav-link" href="/">Параметры модели</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="/graphic">График характеристик</a>
+                <a class="nav-link" href="/graphic">График характеристик</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/diagrams">Диаграммы</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/facks">Возмущения</a>
+                <a class="nav-link active" href="/facks">Возмущения</a>
             </li>
         </ul>
     </header>
 
     <div class="all">
         <div class="container">
-            <div class="graphic-section">
-                <h2 class="page-title">График характеристик</h2>
-                <p class="page-subtitle">Зависимость характеристик от концентрации загрязняющих веществ (C)</p>
+            <div class="disturbances-section">
+                <h2 class="page-title">Внешние возмущения и факторы окружающей среды</h2>
+                <p class="page-subtitle">Графики возмущений</p>
                 
-                <div class="image-container" id="graphic-container">
-                    <!-- График будет загружен здесь -->
-                    <img src="/static/images/figure_eco.png" id="graphic-image" class="graphic-img" 
+                <div class="info-box">
+                    <p>В модели используются два типа возмущений:</p>
+                    <div style="margin-top: 10px;">
+                        <div class="legend-item">
+                            <span class="legend-color" style="background-color: #1f77b4;"></span>
+                            <span><strong><span class="chi-symbol-black">χ</span><span class="chi-index-black">₁</span>-<span class="chi-symbol-black">χ</span><span class="chi-index-black">₆</span>:</strong> Зависящие от времени (постоянные значения на интервале)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background-color: #e377c2;"></span>
+                            <span><strong><span class="chi-symbol-black">χ</span><span class="chi-index-black">₇</span>-<span class="chi-symbol-black">χ</span><span class="chi-index-black">₁₄</span>:</strong> Зависящие от концентрации</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="image-container" id="disturbances-container">
+                    <img src="/static/images/disturbances_eco.png" id="disturbances-image" class="graphic-img"
                          onerror="this.style.display='none'">
                 </div>
                 
-                <div class="graphic-info">
-                    <h3>Описание характеристик:</h3>
-                    <div class="variables-list">
-                        <div class="variable-item">
-                            <div class="variable-name">
-                                <span class="legend-box" style="background-color: #1f77b4;"></span>
-                                Cf<span class="sub">1</span> - Потери от заболеваемости населения
-                            </div>
-                            <div class="variable-desc">
-                                Потери, связанные с ростом заболеваемости населения из-за загрязнения атмосферы
-                            </div>
+                <div class="disturbances-info">
+                    <div class="disturbances-grid">
+                        <div class="disturbance-type">
+                            <h3>Возмущения, зависящие от времени (постоянные)</h3>
+                            <ul class="disturbance-list">
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₁</span>(t)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Износ технологического оборудования</strong>
+                                        <span class="disturbance-text">Влияет на эффективность работы предприятия</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₂</span>(t)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Возможность использования кредитных ресурсов</strong>
+                                        <span class="disturbance-text">Влияет на инвестиции в экологические технологии</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₃</span>(t)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Привлечение зарубежных инвесторов</strong>
+                                        <span class="disturbance-text">Влияет на развитие предприятия и внедрение новых технологий</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₄</span>(t)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Спрос на продукцию предприятия</strong>
+                                        <span class="disturbance-text">Влияет на объем производства и выбросов</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₅</span>(t)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Сложность найма сотрудников</strong>
+                                        <span class="disturbance-text">Влияет на качество управления процессами</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₆</span>(t)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Деловая репутация компании</strong>
+                                        <span class="disturbance-text">Влияет на отношение общества и регуляторов</span>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                         
-                        <div class="variable-item">
-                            <div class="variable-name">
-                                <span class="legend-box" style="background-color: #ff7f0e;"></span>
-                                Cf<span class="sub">2</span> - Потери сельского хозяйства
-                            </div>
-                            <div class="variable-desc">
-                                Потери сельского хозяйства от воздействия атмосферных поллютантов
-                            </div>
-                        </div>
-                        
-                        <div class="variable-item">
-                            <div class="variable-name">
-                                <span class="legend-box" style="background-color: #2ca02c;"></span>
-                                Cf<span class="sub">3</span> - Потери от изменения природной среды
-                            </div>
-                            <div class="variable-desc">
-                                Потери от изменения природной среды и экосистем
-                            </div>
-                        </div>
-                        
-                        <div class="variable-item">
-                            <div class="variable-name">
-                                <span class="legend-box" style="background-color: #d62728;"></span>
-                                Cf<span class="sub">4</span> - Потери от ухудшения качества жизни
-                            </div>
-                            <div class="variable-desc">
-                                Потери из-за ухудшения качества жизни населения в результате систематического воздействия
-                            </div>
-                        </div>
-                        
-                        <div class="variable-item">
-                            <div class="variable-name">
-                                <span class="legend-box" style="background-color: #9467bd;"></span>
-                                Cf<span class="sub">5</span> - Потери предприятия
-                            </div>
-                            <div class="variable-desc">
-                                Потери предприятия, возникающие при регулировании атмосферных выбросов и оплате штрафов
-                            </div>
+                        <div class="disturbance-type">
+                            <h3>Возмущения, зависящие от концентрации</h3>
+                            <ul class="disturbance-list">
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₇</span>(C)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Повышенный уровень смога</strong>
+                                        <span class="disturbance-text">Усиливает негативное воздействие на здоровье</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₈</span>(C)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Высокая задымленность от лесных пожаров</strong>
+                                        <span class="disturbance-text">Дополнительный источник загрязнения</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₉</span>(C)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Продолжительный летний антициклон</strong>
+                                        <span class="disturbance-text">Ухудшает рассеивание загрязняющих веществ</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₁₀</span>(C)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Продолжительный зимний антициклон</strong>
+                                        <span class="disturbance-text">Способствует накоплению загрязнений</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₁₁</span>(C)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Высокая загруженность автомагистралей</strong>
+                                        <span class="disturbance-text">Источник дополнительных выбросов автотранспорта</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₁₂</span>(C)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Наличие крупных промышленных предприятий</strong>
+                                        <span class="disturbance-text">Фоновое загрязнение территории</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₁₃</span>(C)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Эпидемиологическая ситуация</strong>
+                                        <span class="disturbance-text">Влияет на уязвимость населения</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="disturbance-symbol">
+                                        <span class="chi-symbol">χ</span><span class="chi-index">₁₄</span>(C)
+                                    </div>
+                                    <div class="disturbance-desc">
+                                        <strong>Наличие санкций</strong>
+                                        <span class="disturbance-text">Влияет на хозяйственную деятельность предприятия</span>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     
-                    
+                    <div class="explanation-text" style="margin-top: 30px; padding: 20px; background-color: rgba(213, 233, 253, 0.47); border-radius: 8px; border-left: 4px solid rgb(111, 179, 243);">
+                        <h3 style="margin-top: 0; color:rgb(111, 179, 243);">Как читать график:</h3>
+                        <p><strong>График 1 (верхний):</strong> Показывает постоянные значения возмущений <span class="chi-symbol-black">χ</span><span class="chi-index-black">₁</span>-<span class="chi-symbol-black">χ</span><span class="chi-index-black">₆</span> (горизонтальные линии). Высота линии соответствует значению возмущения в диапазоне [0, 1].</p>
+                        <p><strong>График 2 (средний):</strong> Показывает, как значения <span class="chi-symbol-black">χ</span><span class="chi-index-black">₇</span>-<span class="chi-symbol-black">χ</span><span class="chi-index-black">₁₀</span> изменяются в зависимости от концентрации загрязняющих веществ (C).</p>
+                        <p><strong>График 3 (нижний):</strong> Показывает, как значения <span class="chi-symbol-black">χ</span><span class="chi-index-black">₁₁</span>-<span class="chi-symbol-black">χ</span><span class="chi-index-black">₁₄</span> изменяются в зависимости от концентрации загрязняющих веществ (C).</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script src="/static/js/graphicChecker.js"></script>
+<script src="/static/js/disturbancesChecker.js"></script>
 </body>
 </html>
